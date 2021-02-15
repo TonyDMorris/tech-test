@@ -1,0 +1,3 @@
+window.awsAPI = {
+    apiEndpoint : ""
+}

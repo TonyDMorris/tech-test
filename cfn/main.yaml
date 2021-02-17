@@ -15,7 +15,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: https://${CodeBucket}.s3-eu-west-1.amazonaws.com/cfn/listenCaptureLambda.yaml             
+        Fn::Sub: https://${CodeBucket}.s3-${AWS::Region}.amazonaws.com/cfn/listenCaptureLambda.yaml             
       TimeoutInMinutes: 60
       Parameters:
         CodeBucket: 
@@ -27,7 +27,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: https://${CodeBucket}.s3-eu-west-1.amazonaws.com/cfn/listenCaptureApiGateway.yaml             
+        Fn::Sub: https://${CodeBucket}.s3-${AWS::Region}.amazonaws.com/cfn/listenCaptureApiGateway.yaml             
       TimeoutInMinutes: 60
       Parameters:
         ListenCaptureLambdaARN:

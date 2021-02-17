@@ -1,16 +1,14 @@
 ## S3 as a database
 
-The project aims to replace a traditional database, although i would consider Amazon S3 as a database in that it is simply a large key-value store and effectivley operates as a no-frills no-SQL database where the Key is the filename, and the Value is the contents of the file.
-Considering that the needs of this project are to simply store json files via a GUID and retreive them the same way, S3 is actually great choice for the POC as it is significantly cheaper than the alternatives.
-In fact I have read that orders older than 12 months on amazon are actually stored in S3, but i would like to clarify that this IS a database in all but name , and as such i feel that it is a great choice and i would't suggest this strategy be changed, but we shouldn't be under the illusion that we have completley satisfied the principle premise of the POC.
+Considering that the needs of this project are to simply to store json files via a GUID and retreive them the same way, S3 is actually great choice for the POC as it is significantly cheaper than the alternatives.
+In fact I have read that orders older than 12 months on amazon are actually stored in S3. 
 
 
-You are "considering using AWS S3 bucket instead of a NoSQL database", but the fact is that Amazon S3 effectively is a NoSQL database.
+# cfn 
+the cloud formation files are not region agnostic and the instructions do not specifiy that your resources have to be in eu-west-1 , arn's should be used instead so that the we do not need to make considerations about aws regions when editing templates.
 
-It is a very large Key-Value store. The Key is the filename, the Value is the contents of the file.
+# changes
 
-If your needs are simply "Store a value with this key" and "Retrieve a value with this key", then it would work just fine!
+1. the main.yaml cloud formation template was not region agnostic and due to my s3 bucket region being different than the hard coded one this prevented the templates from being built.
+I have updated the resources to use the current region in which the template is being executed.
 
-In fact, old orders on Amazon.com (more than a year old) are apparently archived to Amazon S3 since they are read-only (no returns, no changes).
-
-While slower than DynamoDB, Amazon S3 certainly costs significantly less for storage!

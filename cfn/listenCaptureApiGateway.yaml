@@ -6,6 +6,10 @@ Parameters:
     Type: String
     Description: The ARN for the listenLambda.
 
+  ListenQuestionnaireCaptureLambdaARN:
+    Type: String
+    Description: The ARN for the listenQuestionnaireLambda.
+
 Resources:
   ListenApi:
     Type: AWS::ApiGateway::RestApi
@@ -20,6 +24,17 @@ Resources:
       Action: lambda:invokeFunction
       FunctionName:
         !Ref ListenCaptureLambdaARN
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub
+        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${API}/*
+        - {API: !Ref 'ListenApi'}
+
+    GatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        !Ref ListenQuestionnaireCaptureLambdaARN
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub
         - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${API}/*
@@ -65,6 +80,14 @@ Resources:
       RestApiId: !Ref 'ListenApi'
       ParentId: !GetAtt 'ListenApi.RootResourceId'
       PathPart: resources
+
+  LambdaQuestionnaire:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref 'ListenApi'
+      ParentId: !GetAtt 'ListenApi.RootResourceId'
+      PathPart: questionnaire
+
 
   ListenCaptureOption:
     Type: AWS::ApiGateway::Method
@@ -135,6 +158,55 @@ Resources:
               method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       ResourceId: !Ref 'LambdaResource'
+      RestApiId: !Ref 'ListenApi'
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+
+  ListenQuestionnaireCaptureGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListenQuestionnaireCaptureLambdaARN}/invocations"
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      ResourceId: !Ref 'LambdaQuestionnaire'
+      RestApiId: !Ref 'ListenApi'
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  ListenQuestionnaireCapturePost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListenQuestionnaireCaptureLambdaARN}/invocations"
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      ResourceId: !Ref 'LambdaQuestionnaire'
       RestApiId: !Ref 'ListenApi'
       MethodResponses:
         - StatusCode: '200'

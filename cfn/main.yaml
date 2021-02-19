@@ -9,6 +9,10 @@ Parameters:
   AnswersBucketName:
     Description: The name of the bucket where the answers will be stored.
     Type: String
+
+  QuestionnaireBucketName:
+    Description: The name of the bucket where the questionnaires will be stored.
+    Type: String
   
 Resources:
   ListenCaptureLambda:
@@ -23,6 +27,20 @@ Resources:
         AnswersBucketName:
           Ref: AnswersBucketName
 
+  ListenQuestionnaireCaptureLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        Fn::Sub: https://${CodeBucket}.s3-${AWS::Region}.amazonaws.com/cfn/listenQuestionnaireCaptureLambda.yaml             
+      TimeoutInMinutes: 60
+      Parameters:
+        CodeBucket: 
+          Ref: CodeBucket
+        AnswersBucketName:
+          Ref: AnswersBucketName
+        QuestionnaireBucketName:
+          Ref: QuestionnaireBucketName
+
   ListenAPI:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -34,4 +52,11 @@ Resources:
           Fn::GetAtt:
             - ListenCaptureLambda
             - Outputs.ListenCaptureLambdaARN
+
+        ListenQuestionnaireCaptureLambdaARN:
+          Fn::GetAtt:
+            - ListenCaptureLambda
+            - Outputs.ListenQuestionnaireCaptureLambdaARN
+
+
 

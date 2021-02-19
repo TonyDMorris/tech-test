@@ -43,28 +43,7 @@ func handleGetRequest(ctx context.Context, request events.APIGatewayProxyRequest
 }
 func handlePostRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	fmt.Printf("Processing request data for %s.\n", request.RequestContext.RequestID)
-	fmt.Printf("Body size = %d.\n", len(request.Body))
-
-	fmt.Println("Headers:")
-
-	for key, value := range request.Headers {
-		fmt.Printf("      %s: %s\n", key, value)
-	}
-
-	fmt.Println("Parameters")
-
-	for key, value := range request.QueryStringParameters {
-		fmt.Printf("     %s: %s\n", key, value)
-	}
-
-	fmt.Println("Body:")
-	fmt.Printf("%s", request.Body)
-
-	filename := createFileName(request.QueryStringParameters)
-	storeS3(request.Body, filename)
-
-	response := events.APIGatewayProxyResponse{Body: request.Body, StatusCode: 200, Headers: make(map[string]string)}
+	response := events.APIGatewayProxyResponse{Body: "this was a success", StatusCode: 200, Headers: make(map[string]string)}
 	response.Headers["Access-Control-Allow-Origin"] = "*"
 	return response, nil
 }

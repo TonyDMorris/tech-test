@@ -1,4 +1,4 @@
-module github.com/dblx.co.uk/listen/listenQuestionCapture
+module github.com/dblx.co.uk/listen/listenQuestionnaireCapture
 
 go 1.14
 

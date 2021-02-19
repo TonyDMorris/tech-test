@@ -19,3 +19,7 @@ echo "building listenQuestionTrigger"
 cp ./server/lambda/listenQuestionTrigger/dist/listenQuestionTrigger.zip ./dist
 
 
+# Build the listenQuestionnaireCaptureLambda - This is the lambda that captures responses to questions
+echo "building listenQuestionnaireCaptureLambda"
+(cd ./server/lambda/listenQuestionnaireCapture/ && ./build.sh)
+cp ./server/lambda/listenQuestionnaireCapture/dist/listenQuestionnaireCapture.zip ./dist

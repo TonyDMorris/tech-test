@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create the lambda function to capture the listen data and store in s3
+
+Parameters:
+
+  CodeBucket:
+    Description: Location of zip containing listen lambda
+    Type: String
+
+  AnswersBucketName:
+    Description: Name of S3 bucket to store answers to surveys
+    Type: String
+
+  QuestionnaireBucketName:
+    Description: The name of the bucket where the questionnaires will be stored.
+    Type: String
+
+Resources:
+
+  
+
+ 
+  ListenQuestionnaireBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 
+          Ref: QuestionnaireBucketName
+      AccessControl: Private
+     
+
+
+  ListenQuestionnaireCaptureRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+      RoleName: listenQuestionnaireCaptureRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: listenListenQuestionnaireBucketPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject         
+                Resource: 
+                  Fn::Sub: 
+                    - arn:aws:s3:::${bucket_name}/*
+                    - bucket_name: 
+                        Ref: QuestionnaireBucketName
+              
+
+  
+
+ 
+  
+  # This is the lambda function used to store the initial answers to the survey
+  ListenQuestionnaireCaptureLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Lambda function to capture survey and store to s3
+      FunctionName: listenCapture
+      Handler: main
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - ListenQuestionnaireCaptureRole
+          - Arn
+      Runtime: go1.x
+      Timeout: 10
+      Code:
+        S3Bucket:
+          Ref: CodeBucket
+        S3Key: src/listenQuestionnaireCapture.zip
+      Environment:
+        Variables:
+          QuestionnaireBucket: !Ref QuestionnaireBucketName
+
+  
+Outputs:
+  ListenQuestionnaireCaptureLambdaARN:
+    Value:
+      Fn::GetAtt:
+        - ListenQuestionnaireCaptureLambdaFunction
+        - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::Region}-${AWS::StackName}-listenQuestionnaireCaptureLambdaFunctionARN
+  
+  

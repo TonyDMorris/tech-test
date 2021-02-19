@@ -7,7 +7,7 @@ Should the need to SQL functionality arise AWS athena could be used to query the
 
 ## changes
 
-i have begun to implement some changes to the poc , firstly i changes the cloud formation templates to make the stack region agnostic .
+I have begun to implement some changes to the poc , firstly i changes the cloud formation templates to make the stack region agnostic .
 
 secondly I implemented a new lambda function which I was going to use for storing and retreiving questionaires from an s3 bucket
 

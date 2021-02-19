@@ -55,7 +55,7 @@ Resources:
 
         ListenQuestionnaireCaptureLambdaARN:
           Fn::GetAtt:
-            - ListenCaptureLambda
+            - ListenQuestionnaireCaptureLambda
             - Outputs.ListenQuestionnaireCaptureLambdaARN
 
 

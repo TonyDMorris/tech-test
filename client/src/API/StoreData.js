@@ -4,7 +4,10 @@ const storeData = (quizData) => {
     const apiEndpoint = window.awsAPI.apiEndpoint + "?quizId=" + quizData.quizId;
     console.log(apiEndpoint);
 
-    axios.post(apiEndpoint, { quizData })
+    axios.post(apiEndpoint, { quizData }, {headers:{
+      "Content-Type":"text/plain",
+      
+    }})
        .then(res => {
          console.log(res);
          console.log(res.data);

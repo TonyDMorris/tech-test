@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -25,8 +26,23 @@ func createFileName(queryParameters map[string]string) string {
 	fmt.Println(year, int(month), day)
 	return fmt.Sprintf("%s/%d-%d/%s.json", quizId, int(month), year, genUUID())
 }
+ func route(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+switch request.HTTPMethod {
+case http.MethodGet:
+	return  handleGetRequest(ctx, request)
+case http.MethodPost:
+	return handlePostRequest(ctx, request)
+default:
+	return events.APIGatewayProxyResponse{StatusCode: http.StatusMethodNotAllowed}, nil
+}
 
-func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+}
+
+func handleGetRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {}
+func handlePostRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	
+	
 	fmt.Printf("Processing request data for %s.\n", request.RequestContext.RequestID)
 	fmt.Printf("Body size = %d.\n", len(request.Body))
 
@@ -85,7 +101,7 @@ func storeS3(data string, filename string) {
 }
 
 func main() {
-	lambda.Start(handleRequest)
+	lambda.Start(route)
 }
 
 func exitErrorf(msg string, args ...interface{}) {

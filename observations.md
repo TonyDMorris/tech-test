@@ -4,9 +4,6 @@ Considering that the needs of this project are to simply to store json files via
 In fact I have read that orders older than 12 months on amazon are actually stored in S3. 
 
 
-# cfn 
-the cloud formation files are not region agnostic and the instructions do not specifiy that your resources have to be in eu-west-1 , arn's should be used instead so that the we do not need to make considerations about aws regions when editing templates.
-
 # changes
 
 1. the main.yaml cloud formation template was not region agnostic and due to my s3 bucket region being different than the hard coded one this prevented the templates from being built.
